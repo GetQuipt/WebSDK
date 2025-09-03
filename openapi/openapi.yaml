@@ -1,0 +1,1904 @@
+openapi: 3.0.3
+info:
+  title: Quipt - OpenAPI 3.0
+  description: >-
+    The API defines 2 specific work flows depending on how you want to work with
+    Quipt.
+
+
+    The Merchant API is a robust and adaptable suite of tools designed to
+    seamlessly integrate with your existing systems, enabling efficient and
+    scalable sales management. By automating manual tasks, streamlining
+    workflows, and providing real-time data insights, the API empowers
+    businesses to:
+      - Enhance operational efficiency
+      - Reduce costs and operational overhead
+      - Drive sales growth and market reach
+      - Offer an improved customer experience
+      
+    The Retailer API empowers organizations to automate their purchasing
+    functions, transforming their procurement landscape for enhanced efficiency,
+    cost savings, and control. By automating manual tasks, streamlining
+    workflows, and providing real-time data insights, the API empowers
+    businesses to:
+
+    - Search and compare products from diverse merchants through a centralized
+    platform.
+
+    - Access real-time inventory data and pricing information.
+
+    - Streamline product selection and requisition processes.
+
+    - Create and submit purchase orders electronically to multiple retailers.
+
+    - Track order status, delivery updates, and invoices in real-time.
+
+
+    The [Carrier API](#tag-Merchant_API) is a set of endpoints to get the available carriers and carrier methods that are used as part of the order workflows. They are used as part of the order and shipment endpoints. 
+    
+    that are useful to both
+    Merchant and Retailer API.
+
+
+    Some useful links:
+
+    - [OAuth 1.0a Specification](http://tools.ietf.org/html/rfc5849)
+
+
+    Samples to call protected resources:
+
+    - [PHP]()
+
+    - [BASH script]()
+
+    - [C#]()
+  termsOfService: https://getquipt.com/terms-of-service/
+  contact:
+    email: support@getquipt.com
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Quipt
+  url: http://getquipt.com
+servers:
+  - url: https://api.getquipt.com/v2
+tags:
+  - name: Merchant API
+    description: Perform merchant workflows.
+    externalDocs:
+      description: Find out more about a merchant integration.
+      url: https://getquipt.com/api/merchant-api/
+  - name: Retailer API
+    description: Perform retailer workflows.
+    externalDocs:
+      description: Find out more about a retailer integration.
+      url: https://getquipt.com/api/merchant-api/
+  - name: Carrier API
+    description: Get carrier details.
+  - name: Taxonomy API
+    description: >-
+      Categories are arranged in a tree structure, where:<br/>
+      - Each category has a unique id.<br/>
+      - A category can have multiple child categories.<br/>
+      - A category must have IsLeaf: true to have a product assigned to it.
+      - Any category may have Attributes associated, but refer to categories with IsLeaf: true to see those required for a category.
+paths:
+  /inventory/physical:
+    post:
+      tags:
+        - Merchant API
+      summary: Add or update items.
+      description: Add or update items.
+      operationId: addUpdateInventoryItems
+      requestBody:
+        description: >-
+          Create and update inventory items. This action may be applied to both
+          complete and incomplete inventory items. At a minimum the SKU is
+          required, likewise include as many properties as possible via API, the
+          rest may be completed within the Quipt web application.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getAddUpdateInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:inventory
+  /inventory/physical/report/{reportId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Merchant API
+      summary: Get job report details by ReportId.  
+      description: Get job report details by ReportId.
+      operationId: getAddUpdateInventoryItemsReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The ReportId provided by the addUpdateInventoryItems response.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: includeLines
+          in: query
+          description: Whether or not to include line details with report.
+          required: false
+          schema:
+            type: boolean    
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryJobReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:inventory  
+  /inventory/physical/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Merchant API
+      summary: Get physical inventory items.
+      description: Get a paged list of inventory items based on search parameters.
+      operationId: getPhysicalInventory
+      parameters:
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: skus
+          in: query
+          description: Comma separated list of SKUs to lookup.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ids
+          in: query
+          description: Comma separated list of ids to lookup.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Catalog
+                - Feeds
+                - Comments
+                - History
+                - Report
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:inventory
+  /inventory/physical/id/{id}:
+    get:
+      tags:
+        - Merchant API
+      summary: Get physical inventory item by id.
+      description: Get physical inventory item by id.
+      operationId: getPhysicalInventoryById
+      parameters:
+        - name: id
+          in: path
+          description: The id to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Catalog
+                - Feeds
+                - Comments
+                - History
+                - Report
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:inventory
+  /inventory/virtual/acknowledge:
+    post:
+      tags:
+        - Retailer API
+      summary: Update virtual items.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: updateVirtualInventoryItems
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:feeds
+  /inventory/virtual/report/{reportId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Retailer API
+      summary: Get job report details by ReportId.  
+      description: Get job report details by ReportId.
+      operationId: getUpdateVirtualInventoryItemsReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The ReportId provided by the updateVirtualInventoryItems response.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: includeLines
+          in: query
+          description: Whether or not to include line details with report.
+          required: false
+          schema:
+            type: boolean    
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryVirtualAckJobReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:feeds 
+  /inventory/virtual/{merchantId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Retailer API
+      summary: Get virtual inventory items.
+      description: Get a paged list of virtual inventory items based on search parameters.
+      operationId: getVirtualInventory
+      parameters:
+        - name: merchantId
+          in: path
+          description: The merchant to lookup. Can be the partner reference or the internal id.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: catalogStatus
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            0 = New<br/>
+            10 = Received<br/>
+            20 = Accepted<br/>
+            30 = Rejected<br/>
+            40 = Published
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: inventoryStatus
+          in: query
+          description: >-
+            A comma separated list of statuses.<br/>
+            0 = New<br/>
+            10 = Received<br/>
+            20 = Accepted<br/>
+            30 = Rejected; Does not exist<br/>
+            31 = Rejected; Unauthorized<br/>
+            32 = Rejected; already mapped<br/>
+            33 = Rejected Unknown<br/>
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null. 
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Catalog
+                - Details
+                - Freight
+                - Properties
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:feeds
+  /inventory/virtual/id/{id}:
+    get:
+      tags:
+        - Retailer API
+      summary: Get virtual inventory item by id.
+      description: Get virtual inventory item by id.
+      operationId: getVirtualInventoryById
+      parameters:
+        - name: id
+          in: path
+          description: The id to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Catalog
+                - Details
+                - Freight
+                - Properties
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:feeds
+  /carriers:
+    get:
+      tags:
+        - Carrier API
+      summary: Get supported carriers.
+      description: Get supported carriers.
+      operationId: getCarriers
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierReply'
+        '400':
+          description: Invalid request.
+  /carriers/methods:
+    get:
+      tags:
+        - Carrier API
+      summary: Get supported carrier methods.
+      description: Get supported carrier methods.
+      operationId: getCarrierMethods
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierMethodReply'
+        '400':
+          description: Invalid request.
+  /carriers/{carrierCode}/methods:
+    get:
+      tags:
+        - Carrier API
+      summary: Get supported carrier methods by carrier.
+      description: Get supported carrier methods by carrier.
+      operationId: getCarrierMethodsByCarrierCode
+      parameters:
+        - name: carrierCode
+          in: path
+          description: >- 
+            The carrier code. Use getCarriers to get available codes.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierMethodReply'
+        '400':
+          description: Invalid request.
+  /categories:
+    get:
+      tags:
+        - Taxonomy API
+      summary: Get root categories.
+      description: >-
+        Get top level categories defined within Quipt.
+      operationId: getRootCategories
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryReply'
+        '400':
+          description: Invalid request.
+  /categories/{categoryId}:
+    get:
+      tags:
+        - Taxonomy API
+      summary:  Get children categories.
+      description: >-
+        Get children categories. Used to traverse the category tree. If the intention is to list against the selected category ensure IsLeaf is true.
+      operationId: getCategoriesByParentId
+      parameters:
+        - name: categoryId
+          in: path
+          description: >- 
+            The parent of the next level of categories.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryReply'
+        '400':
+          description: Invalid request.
+  /categories/search:        
+    get:
+      tags:
+        - Taxonomy API
+      summary: Get the categories that best match the provided keywords.  
+      description: >-
+        Get the categories that best match the provided keywords. One thing to keep in mind is we will perform 2 searches.
+          1. Catalog search to identify relevant categories.
+          2. Category tree search to identify categories that match provided keywords.
+        Also, keep in mind returned categories may not have IsLeaf as true, so you will need to use getCategoriesbyParentId to identify a leaf category.
+      operationId: getCategoriesByKeywords
+      parameters:
+        - name: keywords
+          in: query
+          description: >- 
+            The tags/phrase to lookup.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryReply'
+        '400':
+          description: Invalid request.            
+  /categories/{categoryId}/attributes:
+    get:
+      tags:
+        - Taxonomy API
+      summary: Get the attributes associated to the category. 
+      description: >-
+        Get the attributes associated to the category. If the intention is to list against the selected category ensure IsLeaf is true.
+      operationId: getAttributesByCategoryId
+      parameters:
+        - name: categoryId
+          in: path
+          description: >- 
+             The attributes returned will be associated to the provided categoryId.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttributeReply'
+        '400':
+          description: Invalid request.
+components:
+  schemas:
+    InventoryJob:
+      required:
+        - Items
+      type: object
+      properties:
+        Purge:
+          type: boolean
+          description: Set to true to zero out quantities for items not included in update.
+        Items:
+          type: array
+          description: The list of inventory items to update.
+          items:
+            $ref: '#/components/schemas/Inventory'
+    InventoryJobReply:
+      required:
+        - Result
+        - ReportId
+        - ReportTime
+        - ReportStatus
+        - Paging
+        - Success
+        - Messages
+      type: object
+      properties:
+        Result:
+          type: array
+          description: The list of inventory items processed by job.
+          items:
+            $ref: '#/components/schemas/InventoryJobReplyItem'
+        ReportId:
+          type: string
+          description: The id of the referenced report.
+        ReportTime:
+          type: string
+          format: date-time
+          description: The date and time report was submitted.
+        ReportStatus:
+          type: integer
+          format: int32
+          description: >- 
+            The current job status.<br/>
+            1 - Ready<br/>
+            4 - Queued<br/>
+            16 - In Progress<br/>
+            64 - Completed<br/>
+            256 - Failed
+        Paging:
+          $ref: '#/components/schemas/PagingReply'
+        TransactionId:
+          type: string 
+          description: A copy of the TransactionId referenced in request.
+        TransactionTime:
+          type: string
+          format: date-time
+          description: The date and time when request completed.
+        Success:
+          type: boolean
+          description: Whether or not request completed successfully.
+        Messages:
+          type: array
+          items: 
+            $ref: '#/components/schemas/JobReplyMessage'
+          description: Messages produced by request.
+    InventoryJobReplyItem:
+      required:
+        - InventoryId
+        - Id
+        - Status
+        - Record
+      properties:
+        InventoryId:
+          type: string
+          description: The internal id for the inventory item.
+        Id:
+          type: string
+          description: The job record id.
+        Status:
+          type: integer
+          format: int32
+          description: >- 
+            The current record status.<br/>
+            64 - Completed<br/>
+            256 - Failed
+        Message:
+          type: string
+          description: Message produced by update.
+        Record:
+          type: integer
+          format: int32
+          description: The position of the item in the original request.
+    JobReplyMessage:
+      required:
+        - Code
+        - Text
+        - Severity
+      properties:
+        Code:
+          type: string
+          description: The message code.
+        Text:
+          type: string
+          description: The message text.
+        Severity: 
+          type: integer
+          format: int32
+          description: >-
+            The message severity.<br/>
+            0 - Informational<br/>
+            1 - Warning<br/>
+            2 - Fatal
+    Inventory:
+      required:
+        - SKU
+      type: object
+      properties:
+        Catalog:
+          $ref: '#/components/schemas/Catalog'
+        MinPurchaseQuantity:
+          type: integer
+          format: int32
+          description: >-
+            The minimum quantity to be purchased in a single order.<br/>
+            Typical value of 1.
+        MultiplePurchaseQuantity:
+          type: integer
+          format: int32
+          description: >-
+            The multiple quantity to be purchased in a single order.<br/>
+            For example if value of 5, then purchase order should be for quantities of 5, 10, 15, etc.
+            Typical value of 1.
+        LeadTimeInDays:
+          description: Time to ship product in days.
+          type: integer
+          format: int32
+        UnitsPerCarton:
+          description: The number of units that can be included in a single product.
+          type: integer
+          format: int32
+        UserDefined1:
+          type: string
+          maxLength: 50
+          description: A user mana ged field 1.
+        UserDefined2:
+          type: string
+          maxLength: 50
+          description: A user managed field 2.
+        Notes:
+          type: string
+          description: Additional note for the inventory item.
+        Tags:
+          type: array
+          items:
+            type: string
+          description: A list of tags are used to enhance inventory searches.
+        Weight:
+          $ref: '#/components/schemas/Weight'
+        Dimensions:
+          $ref: '#/components/schemas/Dimensions'
+        DropShipOption:
+          description: >-
+            Whether or not the item should be drop shipped.<br/>
+            0 - No<br/>
+            1 - Yes
+          type: integer
+          format: int32
+        Locations:
+          description: >-
+            The location details for the inventory item. Includes items like warehouse, quantity, and serialization details.
+          type: array
+          items:
+            $ref: '#/components/schemas/InventoryLocation'
+        Id:
+          description: The internal id for the inventory item.
+          type: string
+        SKU:
+          description: The merchant sku.
+          type: string
+          minLength: 1
+          maxLength: 100
+        Cost:
+          description: >- 
+            The merchant's internal cost. Used to track profitability in reporting. If preference is not to share, use a value of 0.
+          allOf:
+            - $ref: '#/components/schemas/Amount'
+            - type: object
+        Feeds:
+          description: >- 
+            The list of feeds related to this inventory item.
+          type: array
+          items:
+            $ref: '#/components/schemas/Feed'
+        Pricing:
+          description: >- 
+            The pricing provided will override existing feed pricing. If pricing set at feed level that takes precedent.
+          allOf:
+            - $ref: '#/components/schemas/FeedPricing'
+            - type: object
+    InventoryLocation:
+      type: object
+      properties:
+        Id:
+          description: The internal id for the inventory location.
+          type: string
+        Quantity:
+          description: The available quantity.
+          allOf:
+            - $ref: '#/components/schemas/Quantity'
+            - type: object
+        QuantityOnOrder:
+          description: The quantity awaiting receipt by warehouse.
+          allOf:
+            - $ref: '#/components/schemas/Quantity'
+            - type: object
+        Serials:
+          description: >-
+            Serialization details for available quantity. If Serials are used, Bins may not be used.
+          allOf:
+            - $ref: '#/components/schemas/InventorySerials'
+            - type: object
+        Bins:
+          description: >-
+            Bin details for available quantity. If Bins are used, Serials  may not be used.
+          allOf:
+            - $ref: '#/components/schemas/InventoryBins'
+            - type: object
+        Warehouse:
+          description: >-
+            Warehouse where inventory is located.
+          allOf:
+            - $ref: '#/components/schemas/InventoryWarehouse'
+            - type: object
+    Catalog:
+      type: object
+      properties:
+        Id:
+          type: string
+        Weight:
+          $ref: '#/components/schemas/Weight'
+        Dimensions:
+          $ref: '#/components/schemas/Dimensions'
+        Warranty:
+          $ref: '#/components/schemas/Warranty'
+        Condition:
+          $ref: '#/components/schemas/CodeBase'
+        Packaging:
+          $ref: '#/components/schemas/CodeBase'
+        InBox:
+          type: array
+          items:
+            type: string
+        Title:
+          type: string
+          maxLength: 100
+        AltTitle:
+          type: string
+          maxLength: 70
+        AltTitle2:
+          type: string
+          maxLength: 100
+        Manufacturer:
+          $ref: '#/components/schemas/Brand'
+        Brand:
+          $ref: '#/components/schemas/Brand'
+        SKUs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogSKU'
+        CountryOfOrigin:
+          $ref: '#/components/schemas/Country'
+        Category:
+          $ref: '#/components/schemas/Category'
+        Attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogAttribute'
+        Pricing:
+          $ref: '#/components/schemas/CatalogPricing'
+        Features:
+          type: array
+          items:
+            type: string
+        SpecSheetURL:
+          type: string
+        Description:
+          type: string
+        PrimaryImage:
+          $ref: '#/components/schemas/Asset'
+        AdditionalImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+        Documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+        Tags:
+          type: array
+          items:
+            type: string
+        VersionNumber:
+          type: integer
+          format: int32
+    CatalogSKU:
+      type: object
+      properties:
+        Type:
+          type: integer
+          format: int32
+        Value:
+          type: string
+    CatalogAttribute:
+      type: object
+      properties:
+        Id:
+          type: string
+        Code:
+          type: string
+        Value:
+          type: array
+          items:
+            type: string
+    CatalogPricing:
+      type: object
+      properties:
+        MSRP:
+          $ref: '#/components/schemas/Amount'
+        MSRPURL:
+          type: string
+    Country:
+      type: object
+      properties:
+        ISO:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: >-
+            The [2 character code](https://www.iban.com/country-codes) of the product's country of origin. Only provide one of the properties, ISO, ISO3 or Name.
+        ISO3:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: >-
+            The [3 character code](https://www.iban.com/country-codes) of the product's country of origin. Only provide one of the properties, ISO, ISO3 or Name.
+        Name:
+          type: string
+          description: >-
+            The county name. Only provide one of the properties, ISO, ISO3 or Name.
+    Asset:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: Internal asset id.
+        URL:
+          type: string
+          description: URL to download the asset.
+        Type:
+          type: integer
+          format: int32
+          description: >-
+            The asset type.<br/>
+            0 - Image<br/>
+            1 - Document (*.pdf, *.docx, *.xlsx, etc.)
+        Name:
+          type: string
+          maxLength: 255
+          description: Asset name.
+        Description:
+          type: string
+          description: Asset description.
+    Feed:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal id.
+        'On':
+          type: boolean
+          description: Whether the feed is on or off.
+        Channel:
+          description: The channel partner.
+          allOf:
+            - $ref: '#/components/schemas/Partner'
+            - type: object
+        Promo:
+          description: Promotional pricing for channel partner.
+          allOf:
+            - $ref: '#/components/schemas/FeedPromo'
+            - type: object
+        Allocation:
+          description: Allocation details for channel partner.
+          allOf:
+            - $ref: '#/components/schemas/FeedAlloc'
+            - type: object
+        Pricing:
+          description: Pricing for channel partner.
+          allOf:
+            - $ref: '#/components/schemas/FeedPricing'
+            - type: object
+        MapId:
+          description: An identifier provided by channel partner.
+          type: string
+          minLength: 0
+          maxLength: 50
+        ARP:
+          description: The actual retailer price (ARP) as provided by channel partner.
+          allOf:
+            - $ref: '#/components/schemas/Amount'
+            - type: object
+        Properties:
+          description: A list of feed properties.
+          type: array
+          items:
+            $ref: '#/components/schemas/FeedProperty'
+    InventorySerials:
+      type: object
+      properties:
+        Serial:
+          description: A list of serial details. 
+          type: array
+          items:
+            $ref: '#/components/schemas/InventorySerial'
+    InventorySerial:
+      type: object
+      properties:
+        Id:
+          description: The internal id for the serial number. 
+          type: string
+        Number:
+          description: The serial number. 
+          type: string
+        Location:
+          description: The location the serial number is stored. 
+          type: string
+        AddlValues:
+          description: Additional details related to the serial number.
+          type: array
+          items:
+            $ref: '#/components/schemas/AddlValue'
+    AddlValue:
+      type: object
+      properties:
+        Key:
+          description: The key the value refers to.
+          type: string
+        Value:
+          description: The value.
+          type: string
+    InventoryBins:
+      type: object
+      properties:
+        Collection:
+          description: A list of bins. 
+          type: array
+          items:
+            $ref: '#/components/schemas/InventoryBin'
+    InventoryBin:
+      type: object
+      description: An inventory bin.
+      properties:
+        Id:
+          description: The internal id for the bin. 
+          type: string
+        Quantity:
+          description: Quantity within bin.
+          allOf:
+            - $ref: '#/components/schemas/Quantity'
+            - type: object
+        Location:
+          type: string
+          maxLength: 50
+          description: A free text input to define bin location.
+        UserDefined1:
+          type: string
+          maxLength: 50
+          description: A free text input for the bin.
+    InventoryWarehouse:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal id for the warheouse.
+        Code:
+          type: string
+          description: >- 
+            User managed value to reference the warehouse. The value is managed within each warehouse defined in company settings. 
+    InventoryResult:
+      allOf:
+        - $ref: '#/components/schemas/Inventory'
+      properties:
+        MapId:
+          type: string
+          description: >-
+            QuiptSKU assigned to the inventory item. This value is shared as the SKU with retail partners.
+    InventoryReply:
+      type: object
+      properties:
+        Result:
+          type: array
+          description: Paged inventory results.
+          items:
+            $ref: '#/components/schemas/InventoryResult'
+        Paging:
+          description: Paging details.
+          allOf:
+            - $ref: '#/components/schemas/PagingReply'
+            - type: object
+    PagingReply:
+      type: object
+      properties:
+        PageNumber:
+          type: integer
+          format: int32
+          description: Current page number.
+        Total:
+          type: integer
+          format: int32
+          description: Total records.
+        HasMoreRecords:
+          type: boolean
+          description: Whether or not more pages exist.
+    JobReply:
+      type: object
+      properties:
+        ReportId:
+          type: string
+          description: The id for the newly created job.
+        RecordsReceived:
+          type: integer
+          format: int32
+          description: The number of records received.
+        TransactionId:
+          type: string
+          description: The return of the TransactionId included in request.
+        TransactionTime:
+          type: string
+          description: The date-time the transaction completed.
+        Success:
+          type: boolean
+          description: Whether or not the transaction was successful.
+        Messages:
+          type: array
+          description: List of messages in result of the request.
+          items:
+            type: string
+    Amount:
+      type: object
+      properties:
+        Value:
+          type: number
+          format: double
+          description: The value.
+        Units:
+          type: integer
+          format: int32
+          description: >- 
+            The currency type.
+            0 - USD
+    Quantity:
+      type: object
+      properties:
+        Value:
+          type: number
+          format: double
+          description: The value.
+        Units:
+          type: integer
+          format: int32
+          description: >- 
+            The unit of measure.
+            0 - Each
+    QuantityWithDate:
+      allOf:
+        - $ref: '#/components/schemas/Quantity'
+      properties:
+        ExpectedAt:
+          type: string
+          format: date-time
+          description: The date-time the allocation ends and will be removed.
+    Weight:
+      type: object
+      properties:
+        Value:
+          type: number
+          format: double
+          description: The ship weight for a single unit.
+        Units:
+          type: integer
+          format: int32
+          description: >- 
+            The ship packaging unit of measure.
+            0 - Pounds
+    Dimensions:
+      type: object
+      properties:
+        Length:
+          type: number
+          format: double
+          description: The ship package length for a single unit.
+        Width:
+          type: number
+          format: double
+          description: The ship package width for a single unit.
+        Height:
+          type: number
+          format: double
+          description: The ship package height for a single unit.
+        Units:
+          type: integer
+          format: int32
+          description: >- 
+            The ship packaging unit of measure.
+            0 - Inches
+    Warranty:
+      type: object
+      properties:
+        Duration:
+          type: string
+          description: The length of warranty support.
+        Email:
+          type: string
+          description: The email address to contact for warranty support.
+        PhoneNumber:
+          description: The phone number to call for warranty support.
+          allOf:
+            - $ref: '#/components/schemas/PhoneNumber'
+            - type: object
+        Provider:
+          type: integer
+          format: int32
+          description: >-
+            The provider.<br/>
+            0 - None<br/>
+            5 - Manufacturer<br/>
+            10 - Distributor
+        URL:
+          type: string
+          description: The URL to visit for warranty support.
+    CodeBase:
+      type: object
+      properties:
+        Code:
+          type: string
+          description: The code.
+        Id:
+          type: string
+          description: The internal id.
+    PhoneNumber:
+      type: object
+      properties:
+        CountryISO:
+          type: string
+          description: The country [ISO 2](https://www.iban.com/country-codes) code.
+        Number:
+          type: string
+          description: The phone number.
+    Brand:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: The brand name.
+        Id:
+          type: string
+          description: The internal brand id.
+    Partner:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal partner id.
+        Code:
+          type: string
+          description: >-
+            The user managed value to reference a partner. Managed by setting "Partner Reference" within partner settings.
+    FeedPromo:
+      type: object
+      properties:
+        Pricing:
+          description: The promotional pricing.
+          allOf:
+            - $ref: '#/components/schemas/FeedPricingPromo'
+            - type: object
+        Allocation:
+          description: The allocation details.
+          allOf:
+            - $ref: '#/components/schemas/QuantityWithDate'
+            - type: object
+    FeedAlloc:
+      type: object
+    FeedPricing:
+      type: object
+      properties:
+        Recovery:
+          description: The amount to receive for this product.
+          allOf:
+            - $ref: '#/components/schemas/Amount'
+            - type: object
+        SRP:
+          description: The amount to sell this product to an end customer.
+          allOf:
+            - $ref: '#/components/schemas/Amount'
+            - type: object
+    FeedPricingPromo:
+      allOf:
+        - $ref: '#/components/schemas/FeedPricing'
+      properties:
+        StartTime:
+          type: string
+          format: date-time
+          description: The date-time when the promotion starts.
+        EndTime:
+          type: string
+          format: date-time
+          description: The date-time when the promotion ends.
+    FeedProperty:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal feed property id.
+        Code:
+          type: string
+          description: The property code.
+        Value:
+          type: string
+          description: The property value.
+    Category:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal category id. Reference taxonomy API for value.
+        Name:
+          type: string
+          description: The category name. If used to perform inventory item maintenance, you must include the long name.
+    InventoryVirtualAck:
+      required:
+        - SKU
+      type: object
+      properties:
+        Id: 
+          type: string
+          description: The internal id.
+        SKU:
+          type: string
+          maxLength: 50
+          description: The value provided by vendor to track listing.
+        Messages:
+          type: array
+          description: The list of messages to share with vendor.
+          items:
+            type: string
+            maxLength: 255
+        ARP:
+          type: object
+          description: The current price for the item on the channel's web site.
+          allOf:
+            - $ref: '#/components/schemas/Amount'
+            - type: object
+        CatalogStatus:
+          type: number
+          format: int32
+          description: >-
+            The current content status.
+            0 = New<br/>
+            10 = Received<br/>
+            20 = Accepted<br/>
+            30 = Rejected<br/>
+            40 = Published
+        InventoryStatus:
+          type: number
+          format: int32
+          description: >-
+            A comma separated list of statuses.<br/>
+            0 = New<br/>
+            10 = Received<br/>
+            20 = Accepted<br/>
+            30 = Rejected; Does not exist<br/>
+            31 = Rejected; Unauthorized<br/>
+            32 = Rejected; already mapped<br/>
+            33 = Rejected Unknown<br/>
+        MapId: 
+          type: string
+          description: >-
+            The identifer used by channel to identify the item.
+          maxLength: 50
+        MapURL: 
+          type: string
+          description: >-
+            URL to the item on the channel's web site.
+        Quantity:
+          type: object
+          description: >-
+            The quantity the channel currently shows available. Used to ensure quantity on Quipt and channel match. May trigger update if mis-match detected.
+          allOf:
+            - $ref: '#/components/schemas/Quantity'
+            - type: object
+        BuyBox:
+          type: object
+          description: >- 
+            The details regarding best pricing on a channel web site. Can be provided to vendor, so can make informed selling decisions.
+          allOf:
+            - $ref: '#/components/schemas/BuyBox'
+            - type: object
+    InventoryVirtualAckJob:
+      required:
+        - Items
+      type: object
+      properties:
+        Items:
+          type: array
+          description: The list of inventory items to update.
+          items:
+            $ref: '#/components/schemas/InventoryVirtualAck'
+    InventoryVirtualAckJobReply:
+      required:
+        - Result
+        - ReportId
+        - ReportTime
+        - ReportStatus
+        - Paging
+        - Success
+        - Messages
+      type: object
+      properties:
+        Result:
+          type: array
+          description: The list of virtual inventory acknowledgements processed by job.
+          items:
+            $ref: '#/components/schemas/InventoryVirtualAckJobReplyItem'
+        ReportId:
+          type: string
+          description: The id of the referenced report.
+        ReportTime:
+          type: string
+          format: date-time
+          description: The date and time report was submitted.
+        ReportStatus:
+          type: integer
+          format: int32
+          description: >- 
+            The current job status.<br/>
+            1 - Ready<br/>
+            4 - Queued<br/>
+            16 - In Progress<br/>
+            64 - Completed<br/>
+            256 - Failed
+        Paging:
+          $ref: '#/components/schemas/PagingReply'
+        TransactionId:
+          type: string 
+          description: A copy of the TransactionId referenced in request.
+        TransactionTime:
+          type: string
+          format: date-time
+          description: The date and time when request completed.
+        Success:
+          type: boolean
+          description: Whether or not request completed successfully.
+        Messages:
+          type: array
+          items: 
+            $ref: '#/components/schemas/JobReplyMessage'
+          description: Messages produced by request.
+    InventoryVirtualAckJobReplyItem:
+      required:
+        - FeedId
+        - Id
+        - Status
+        - Record
+      type: object
+      properties:
+        FeedId:
+          type: string
+          description: The internal id for the virtual inventory item.
+        Id:
+          type: string
+          description: The job record id.
+        Status:
+          type: integer
+          format: int32
+          description: >- 
+            The current record status.<br/>
+            64 - Completed<br/>
+            256 - Failed
+        Message:
+          type: string
+          description: Message produced by update.
+        Record:
+          type: integer
+          format: int32
+          description: The position of the item in the original request.
+    InventoryVirtualReply:
+      type: object
+      properties:
+        Result:
+          type: array
+          description: Paged virtual inventory results.
+          items:
+            $ref: '#/components/schemas/InventoryVirtualResult'
+        Paging:
+          description: Paging details.
+          allOf:
+            - $ref: '#/components/schemas/PagingReply'
+            - type: object
+    BuyBox:
+      type: object
+      properties:
+        Price:
+          type: object
+          description: The best price on channel web site.
+          allOf:
+            - $ref: '#/components/schemas/Amount'
+            - type: object
+        URL:
+          type: string
+          description: The URL to the best priced item.
+    InventoryVirtualDetail:
+      type: object
+      properties:
+        Location:
+          type: object
+          description: The quantity available in the particular warehouse.
+          allOf: 
+            - type: object
+            - $ref: '#/components/schemas/InventoryWarehouse'
+        Available:
+          type: object
+          description: The quantity available in the particular warehouse.
+          allOf: 
+            - type: object
+            - $ref: '#/components/schemas/Quantity'
+        UnitsPerCarton:
+          type: number
+          format: int32
+          description: Number of units that can be placed into outer carton.
+        LeadTimeInDays:
+          type: number
+          format: int32
+          description: Number of days to ship the item.
+        Multiples:
+          type: number
+          format: int32
+          description: The multiple of units to be purchased. Typically 1.
+        Minimum:
+          type: number
+          format: int32
+          description: The minimum number of units to be purchased.
+    InventoryVirtualSummary:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal id for the virtual inventory item.
+        PrimaryImageId:
+          type: string
+          description: The asset id for the primary image.
+        InventoryCatalogId:
+          type: string
+          description: The catalog id for the item.
+        Manufacturer:
+          type: string
+          description: The manufacturer of the product.
+        Title:
+          type: string
+          description: The title of the product.
+        SKU:
+          type: string
+          description: The vendor SKU.
+        MPN:
+          type: string
+          description: The MPN of the product.
+        Condition:
+          type: string
+          description: The condition of the product.
+        UPC:
+          type: string
+          description: The UPC of the product.
+        MSRP:
+          type: string
+          description: The MSRP of the product.
+        VariantKey:
+          type: string
+          description: The identifier used to group like items together, if the channel supports variants.
+    InventoryVirtualResult:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal id.
+        SKU:
+          type: string
+          description: >- 
+            The identifier defined by the vendor, and referenced by the channel for synchronization.
+        Details:
+          type: array
+          description: >-
+            Location specific details for the item.
+          items: 
+            $ref: '#/components/schemas/InventoryVirtualDetail'
+        Summary:
+          type: object
+          description: >-
+            Summarized set of properties used frequently with inventory and pricing sychronization.
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/InventoryVirtualSummary'
+        Promotion:
+          type: object
+          properties:
+            Pricing:
+              type: object
+              allOf:
+                - type: object
+                - $ref: '#/components/schemas/FeedPricingPromo'
+            Status:
+              type: number
+              format: int32
+              description: The current status of the promotion.
+            StatusName:
+              type: string
+              description: The current status name of the promotion.
+            Allocation:
+              type: object
+              allOf:
+                - type: object
+                - $ref: '#/components/schemas/QuantityWithDate'
+        Catalog:
+          type: object
+          description: The product specific details.
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/Catalog'
+        Pricing:
+          type: object
+          description: The pricing. Excludes applied promotions.
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/Amount'
+        CurrentPricing:
+          type: object
+          description: The current sale pricing. Takes into account any applied promotions.
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/Amount'
+        Available:
+          type: object
+          description: The quantity available to sell.
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/Quantity'
+        InventoryStatusAt:
+          type: string
+          format: date-time
+          description: The last date/time the inventory status was updated.
+        InventoryStatusDisplayName:
+          type: string
+          description: The display name for the inventory status.
+        InventoryStatus:
+          type: number
+          format: int32
+          description: >-
+            The inventory status of the item on channel's web site.
+        CatalogStatusAt:
+          type: string
+          format: date-time
+          description: The last date/time the content status was updated.
+        CatalogStatusDisplayName:
+          type: string
+          description: The display name for the content status.
+        CatalogStatus:
+          type: number
+          format: int32
+          description: >-
+            The content status of the item on channel's web site.
+        ARP:
+          type: object
+          description: The actual sale price of the item on the channel's web site.
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/Amount'
+        LastARPChangeAt:
+          type: string
+          format: date-time
+          description: The last date/time ARP was updated.
+        MapId:
+          type: string
+          description: The channel's identifier for the item. 
+        MapURL:
+          type: string
+          description: The URL to the item on the channel's web site. 
+        Blocked:
+          type: object
+          description: The quantity blocked from sale due to either channel or vendor action. Usually correlated with CatalogStatus of Rejected (30).
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/Quantity'
+        Freight:
+          type: object
+          properties:
+            Rates:
+              type: array
+              description: Freight rates for the feed.
+              items:
+                $ref: '#/components/schemas/FeedFreightRate'
+            FreightCollectionOption:
+              type: number
+              format: int32
+              description: >-
+                How freight is collected.<br/>
+                0 = Carrier Account<br/>
+                1 = Prepaid<br/>
+                2 = Invoice<br/>
+        Threshold:
+          type: object
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/Quantity'
+        Properties:
+          type: array
+          description: The list of additional properties attached to item.
+          items: 
+            $ref: '#/components/schemas/FeedProperty'
+        ShippingInfo:
+          type: object
+          description: Shipping details for item.
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/ShippingInfo'
+        On:
+          type: boolean
+          description: Whether or not the item is turned on by the vendor.
+        Comment:
+          type: string
+          description: The last comment applied to item.
+        Vendor:
+          type: object
+          description: The owner of the inventory.
+          allOf:
+            - $ref: '#/components/schemas/Partner'
+            - type: object
+    FeedFreightRate:
+      type: object
+      properties:
+        ServiceLevel:
+          type: number
+          format: int
+          description: >-
+              The carrier method service level.<br/>
+              1 = Ground<br/>
+              2 = 3 day<br/>
+              4 = 2 day<br/>
+              8 = 1 day / Overnight<br/>
+        Rate:
+          type: object
+          description: The rate.
+          allOf:
+            - type: object
+            - $ref: '#/components/schemas/Amount'
+        Included:
+          type: boolean
+          description: Whether or not freight is included in the end customer price.
+    ShippingInfo:
+      type: object
+      properties:
+        Weight:
+          type: object
+          allOf: 
+            - type: object
+            - $ref: '#/components/schemas/Weight'
+        Dimensions:
+          type: object
+          allOf: 
+            - type: object
+            - $ref: '#/components/schemas/Dimensions'    
+    CarrierReply: 
+      type: object
+      properties:
+        Result:
+          type: array
+          description: The carriers.
+          items:
+            $ref: '#/components/schemas/CarrierResult'
+    CarrierResult:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal id.
+        Name:
+          type: string
+          description: The carrier name.
+        Code:
+          type: string
+          description: The carrier code.
+        TrackingUrlFormat:
+          type: string
+          description: The formatted string to build the URL for a tracking number.
+    CarrierMethodReply:
+      type: object
+      properties:
+        Result:
+          type: array
+          description: The carrier methods.
+          items:
+            $ref: '#/components/schemas/CarrierMethodResult'
+    CarrierMethodResult:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal id.
+        Carrier:
+          type: object
+          allOf:
+            - $ref: '#/components/schemas/CarrierResult' 
+            - type: object
+        Name:
+          type: string
+          description: The carrier method name.
+        Code:
+          type: string
+          description: The carrier method code.
+    CategoryReply:
+    CategoryResult:
+    AttributeReply:
+    CategoryAttribute:
+  requestBodies:
+    InventoryJob:
+      description: Inventory object to add.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InventoryJob'
+    InventoryVirtualAckJob:
+      description: Virtual inventory acknowledgement object to update.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InventoryVirtualAckJob'        
+  securitySchemes:
+    quipt_auth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: >
+        OAuth 1.0 authentication requires the following steps:
+
+        1. Obtain a consumer key and secret from the API provider.
+
+        2. Generate an OAuth signature using HMAC-SHA1 or another supported
+        method.
+
+        3. Include the `Authorization` header in your request with the OAuth 1.0
+        credentials.
+
+        Example:
+
+        ```
+
+        Authorization: OAuth oauth_consumer_key="key", oauth_token="token",
+        oauth_signature_method="HMAC-SHA1", oauth_timestamp="timestamp",
+        oauth_nonce="nonce", oauth_version="1.0", oauth_signature="signature"
+
+        ```
