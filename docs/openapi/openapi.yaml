@@ -53,8 +53,6 @@ info:
 
     - [C#]()
   termsOfService: https://getquipt.com/terms-of-service/
-  contact:
-    email: support@getquipt.com
   version: 1.0.0
 externalDocs:
   description: Find out more about Quipt
