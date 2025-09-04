@@ -24,13 +24,13 @@ info:
       - Create and submit purchase orders electronically to multiple retailers.
       - Track order status, delivery updates, and invoices in real-time.
     
-    The [Carrier API](#tag-carrier-api) is a set of endpoints to get the available carriers and carrier methods that are used as part of the order workflows. They are used as part of the order and shipment endpoints. 
+    The [Carrier API](#tag-Carrier_API) is a set of endpoints to get the available carriers and carrier methods that are used as part of the order workflows. They are used as part of the order and shipment endpoints. 
     
     
-    The [Taxonomy API](#tag-taxonomy-api) is a set of endpoints to get the available carriers and carrier methods that are used as part of the order workflows. They are used as part of the order and shipment endpoints. 
+    The [Taxonomy API](#tag-Taxonomy_API) is a set of endpoints to get the available carriers and carrier methods that are used as part of the order workflows. They are used as part of the order and shipment endpoints. 
     
     
-    The [Notifcation API](#tag-notification-api) is a set of endpoints to get application events. Important the user you are using to monitor the events must be subscribed using the [web application](https://app.getquipt.com/#/Settings/MySettings). 
+    The [Notifcation API](#tag-Notification_API) is a set of endpoints to get application events. Important the user you are using to monitor the events must be subscribed using the [web application](https://app.getquipt.com/#/Settings/MySettings). 
     
     
     Some useful links:
