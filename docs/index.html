@@ -18,7 +18,7 @@
         const target = e.target.closest("a[href^='#tag-']");
         if (target) {
           e.preventDefault();
-          const id = target.getAttribute("href").substring(1); // remove leading #
+          const id = 'operations-' + target.getAttribute("href").substring(1); // remove leading #
           const el = document.getElementById(id);
           if (el) {
             el.scrollIntoView({ behavior: "smooth", block: "start" });
