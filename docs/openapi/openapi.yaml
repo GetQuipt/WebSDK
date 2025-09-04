@@ -2,11 +2,7 @@ openapi: 3.0.3
 info:
   title: Quipt - OpenAPI 3.0
   description: >-
-    The API defines 2 specific work flows depending on how you want to work with
-    Quipt.
-
-
-    The Merchant API is a robust and adaptable suite of tools designed to
+    The [Vendor API](#tag-vendor-api) is a robust and adaptable suite of tools designed to
     seamlessly integrate with your existing systems, enabling efficient and
     scalable sales management. By automating manual tasks, streamlining
     workflows, and providing real-time data insights, the API empowers
@@ -15,43 +11,36 @@ info:
       - Reduce costs and operational overhead
       - Drive sales growth and market reach
       - Offer an improved customer experience
-      
-    The Retailer API empowers organizations to automate their purchasing
+    
+    The [Channel API](#tag-channel-api) empowers organizations to automate their purchasing
     functions, transforming their procurement landscape for enhanced efficiency,
     cost savings, and control. By automating manual tasks, streamlining
     workflows, and providing real-time data insights, the API empowers
     businesses to:
-
-    - Search and compare products from diverse merchants through a centralized
+      - Search and compare products from diverse merchants through a centralized
     platform.
-
-    - Access real-time inventory data and pricing information.
-
-    - Streamline product selection and requisition processes.
-
-    - Create and submit purchase orders electronically to multiple retailers.
-
-    - Track order status, delivery updates, and invoices in real-time.
-
-
-    The [Carrier API](#tag-Merchant_API) is a set of endpoints to get the available carriers and carrier methods that are used as part of the order workflows. They are used as part of the order and shipment endpoints. 
+      - Access real-time inventory data and pricing information.
+      - Streamline product selection and requisition processes.
+      - Create and submit purchase orders electronically to multiple retailers.
+      - Track order status, delivery updates, and invoices in real-time.
     
-    that are useful to both
-    Merchant and Retailer API.
-
-
+    The [Carrier API](#tag-carrier-api) is a set of endpoints to get the available carriers and carrier methods that are used as part of the order workflows. They are used as part of the order and shipment endpoints. 
+    
+    
+    The [Taxonomy API](#tag-taxonomy-api) is a set of endpoints to get the available carriers and carrier methods that are used as part of the order workflows. They are used as part of the order and shipment endpoints. 
+    
+    
+    The [Notifcation API](#tag-notification-api) is a set of endpoints to get application events. Important the user you are using to monitor the events must be subscribed using the [web application](https://app.getquipt.com/#/Settings/MySettings). 
+    
+    
     Some useful links:
-
-    - [OAuth 1.0a Specification](http://tools.ietf.org/html/rfc5849)
+      - [OAuth 1.0a Specification](http://tools.ietf.org/html/rfc5849)
 
 
     Samples to call protected resources:
-
-    - [PHP]()
-
-    - [BASH script]()
-
-    - [C#]()
+      - [PHP]()
+      - [BASH script]()
+      - [C#]()
   termsOfService: https://getquipt.com/terms-of-service/
   version: 1.0.0
 externalDocs:
@@ -60,18 +49,52 @@ externalDocs:
 servers:
   - url: https://api.getquipt.com/v2
 tags:
-  - name: Merchant API
+  - name: Vendor API - Inventory
     description: Perform merchant workflows.
     externalDocs:
       description: Find out more about a merchant integration.
       url: https://getquipt.com/api/merchant-api/
-  - name: Retailer API
+  - name: Vendor API - Orders
+    description: Perform merchant workflows.
+    externalDocs:
+      description: Find out more about a merchant integration.
+      url: https://getquipt.com/api/merchant-api/  
+  - name: Vendor API - Shipments
+    description: Perform merchant workflows.
+    externalDocs:
+      description: Find out more about a merchant integration.
+      url: https://getquipt.com/api/merchant-api/
+  - name: Vendor API - Requests
+    description: Perform merchant workflows.
+    externalDocs:
+      description: Find out more about a merchant integration.
+      url: https://getquipt.com/api/merchant-api/   
+  - name: Channel API - Virtual Inventory
     description: Perform retailer workflows.
     externalDocs:
       description: Find out more about a retailer integration.
-      url: https://getquipt.com/api/merchant-api/
+      url: https://getquipt.com/api/retailer-api/
+  - name: Channel API - Orders
+    description: Perform retailer workflows.
+    externalDocs:
+      description: Find out more about a retailer integration.
+      url: https://getquipt.com/api/retailer-api/ 
+  - name: Channel API - Requests
+    description: Perform retailer workflows.
+    externalDocs:
+      description: Find out more about a retailer integration.
+      url: https://getquipt.com/api/retailer-api/     
+  - name: Catalog API
+    description: Search product catalog.
+  - name: Notification API
+    description: Get notifications/events.
   - name: Carrier API
-    description: Get carrier details.
+    description: |
+      Get carrier details.  
+      For the full list of carriers and shipping methods, see the external docs below.
+    externalDocs:
+      description: View sheet with all carriers and methods.
+      url: https://docs.google.com/spreadsheets/d/1qqNOVK_8K12AGUfIlGtWngTC6atZ46UYuurWLPxplpQ
   - name: Taxonomy API
     description: >-
       Categories are arranged in a tree structure, where:<br/>
@@ -79,11 +102,14 @@ tags:
       - A category can have multiple child categories.<br/>
       - A category must have IsLeaf: true to have a product assigned to it.
       - Any category may have Attributes associated, but refer to categories with IsLeaf: true to see those required for a category.
+    externalDocs:
+      description: View taxonomy.
+      url: https://getquipt.github.io/WebSDK/taxonomy.html  
 paths:
   /inventory/physical:
     post:
       tags:
-        - Merchant API
+        - Vendor API - Inventory
       summary: Add or update items.
       description: Add or update items.
       operationId: addUpdateInventoryItems
@@ -115,7 +141,7 @@ paths:
   /inventory/physical/report/{reportId}/{pageSize}/{pageNumber}:
     get:
       tags:
-        - Merchant API
+        - Vendor API - Inventory
       summary: Get job report details by ReportId.  
       description: Get job report details by ReportId.
       operationId: getAddUpdateInventoryItemsReport
@@ -161,7 +187,7 @@ paths:
   /inventory/physical/{pageSize}/{pageNumber}:
     get:
       tags:
-        - Merchant API
+        - Vendor API - Inventory
       summary: Get physical inventory items.
       description: Get a paged list of inventory items based on search parameters.
       operationId: getPhysicalInventory
@@ -228,7 +254,7 @@ paths:
   /inventory/physical/id/{id}:
     get:
       tags:
-        - Merchant API
+        - Vendor API - Inventory
       summary: Get physical inventory item by id.
       description: Get physical inventory item by id.
       operationId: getPhysicalInventoryById
@@ -268,10 +294,1249 @@ paths:
       security:
         - quipt_auth:
             - read:inventory
+  /orders/fulfillment/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Vendor API - Orders
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getFulfillmentOrders
+      parameters:
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+        - name: orderStatus
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            2 = Pending<br/>
+            4 = Open<br/>
+            8 = Shipped<br/>
+            16 = Canceled
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices
+                - Shipments
+                - Cancellations
+                - PackingSlips
+                - ShipByTruckRequests
+                - Payments
+                - Fulfillments
+                - Acknowledgements
+                - SubstitutionFor
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders
+  /orders/fulfillment/id/{id}:
+    get:
+      tags:
+        - Vendor API - Orders
+      summary: Get order by id.
+      description: Get order by id.
+      operationId: getFulfillmentOrdersById
+      parameters:
+        - name: id
+          in: path
+          description: The id to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices
+                - Shipments
+                - Cancellations
+                - PackingSlips
+                - ShipByTruckRequests
+                - Payments
+                - Fulfillments
+                - Acknowledgements
+                - SubstitutionFor
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders
+  /orders/fulfillment/po/{channelIdOrCode}/{poNumber}:
+    get:
+      tags:
+        - Vendor API - Orders
+      summary: Get order by purchase order number.
+      description: Get order by purchase order number.
+      operationId: getFulfillmentOrdersByPO
+      parameters:
+        - name: channelIdOrCode
+          in: path
+          description: The id or partner reference to lookup.
+          required: true
+          schema:
+            type: string
+        - name: poNumber
+          in: path
+          description: The purchase order number to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices
+                - Shipments
+                - Cancellations
+                - PackingSlips
+                - ShipByTruckRequests
+                - Payments
+                - Fulfillments
+                - Acknowledgements
+                - SubstitutionFor
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders
+  /orders/fulfillment/channel/{channelIdOrCode}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Vendor API - Orders
+      summary: Get orders by channel.
+      description: Get orders by channel.
+      operationId: getFulfillmentOrdersByChannel
+      parameters:
+        - name: channelIdOrCode
+          in: path
+          description: The id or partner reference to lookup.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+        - name: orderStatus
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            2 = Pending<br/>
+            4 = Open<br/>
+            8 = Shipped<br/>
+            16 = Canceled
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices
+                - Shipments
+                - Cancellations
+                - PackingSlips
+                - ShipByTruckRequests
+                - Payments
+                - Fulfillments
+                - Acknowledgements
+                - SubstitutionFor
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders
+  /orders/fulfillment/acknowledge:
+    post:
+      tags:
+        - Vendor API - Orders
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: ackFulfillmentOrders
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:orders
+  /orders/fulfillment/ship:
+    post:
+      tags:
+        - Vendor API - Orders
+      summary: Ship orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: shipFulfillmentOrders
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:orders   
+  /orders/fulfillment/invoice:
+    post:
+      tags:
+        - Vendor API - Orders
+      summary: Ship orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: invoiceFulfillmentOrders
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:orders
+  /orders/fulfillment/archive:
+    post:
+      tags:
+        - Vendor API - Orders
+      summary: Archive orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: archiveFulfillmentOrders
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:orders     
+  /orders/fulfillment/report/{reportId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Vendor API - Orders
+      summary: Get job report details by ReportId.  
+      description: Get job report details by ReportId.
+      operationId: getUpdateFulfillmentOrdersReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The ReportId provided by the addUpdateInventoryItems response.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: includeLines
+          in: query
+          description: Whether or not to include line details with report.
+          required: false
+          schema:
+            type: boolean    
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryJobReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders  
+  /orders/shipment/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Vendor API - Shipments
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getFulfillmentShipments
+      parameters:
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+        - name: statuses
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            2 = Pending<br/>
+            32 = New<br/>
+            128 = Readyv 
+            512 = Generatingv
+            1024 = Generated<br/> 
+            4096 = Exported<br/>
+            16384 = Printed<br/>
+            131072 = Pickup Requested<br/>
+            524288 = Picked Up<br/>
+            2097152 = Error<br/>
+            8388608 = Canceled
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: orderIds
+          in: query
+          description: >- 
+          required: false
+          schema:
+            type: array
+            items:
+              type: string  
+        - name: warehouseIds
+          in: query
+          description: >- 
+          required: false
+          schema:
+            type: array
+            items:
+              type: string      
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices 
+                - PackingSlips
+                - ShipByTruckRequests
+                - Labels
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:shipments
+  /orders/shipment/id/{id}:
+    get:
+      tags:
+        - Vendor API - Shipments
+      summary: Get shipment by id.
+      description: Get shipment by id.
+      operationId: getFulfillmentShipmentsById
+      parameters:
+        - name: id
+          in: path
+          description: The id to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices 
+                - PackingSlips
+                - ShipByTruckRequests
+                - Labels
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders
+  /orders/shipment/acknowledge:
+    post:
+      tags:
+        - Vendor API - Shipments
+      summary: Update virtual items.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: ackFulfillmentShipments
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:shipments
+  /orders/shipment/report/{reportId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Vendor API - Shipments
+      summary: Get job report details by ReportId.  
+      description: Get job report details by ReportId.
+      operationId: getUpdateFulfillmentShipmentsReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The ReportId provided by the addUpdateInventoryItems response.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: includeLines
+          in: query
+          description: Whether or not to include line details with report.
+          required: false
+          schema:
+            type: boolean    
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryJobReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:shipments
+  /requests/fulfillment/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Vendor API - Requests
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getFulfillmentRequests
+      parameters:
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+        - name: requestStatus
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            2 = Pending<br/>
+            4 = Open<br/>
+            8 = Shipped<br/>
+            16 = Canceled
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Group
+                - Lines.FillLine
+                - Lines.Tracking
+                - Lines.OrderLine
+                - Lines.OrderLine.Fulfillments
+                - Lines.OrderLine.Acknowledgements
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /requests/fulfillment/{channelIdOrCode}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Vendor API - Requests
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getFulfillmentRequestsByChannel
+      parameters:
+        - name: channelIdOrCode
+          in: path
+          description: The id or partner reference to lookup.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+        - name: requestStatus
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            2 = Pending<br/>
+            4 = Open<br/>
+            8 = Shipped<br/>
+            16 = Canceled
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Group
+                - Lines.FillLine
+                - Lines.Tracking
+                - Lines.OrderLine
+                - Lines.OrderLine.Fulfillments
+                - Lines.OrderLine.Acknowledgements
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /requests/fulfillment/id/{id}:
+    get:
+      tags:
+        - Vendor API - Requests
+      summary: Get order by id.
+      description: Get order by id.
+      operationId: getFulfillmentRequestsById
+      parameters:
+        - name: id
+          in: path
+          description: The id to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Group
+                - Lines.FillLine
+                - Lines.Tracking
+                - Lines.OrderLine
+                - Lines.OrderLine.Fulfillments
+                - Lines.OrderLine.Acknowledgements
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /requests/fulfillment/acknowledge:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: ackFulfillmentRequests
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/create:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: addFulfillmentRequests
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/returnupdate:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: updateFulfillmentRequestsReturn
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/missingaccessoryupdate:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: updateFulfillmentRequestsMissingAccessory
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/lostshipmentupdate:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: updateFulfillmentRequestsLostShipment
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/interceptupdate:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: updateFulfillmentRequestsIntercept
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/creditupdate:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: updateFulfillmentRequestsCredit
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/cancel:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: cancelFulfillmentRequests
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/archive:
+    post:
+      tags:
+        - Vendor API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: archiveFulfillmentRequests
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/fulfillment/report/{reportId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Vendor API - Requests
+      summary: Get job report details by ReportId.  
+      description: Get job report details by ReportId.
+      operationId: getUpdateFulfillmentRequestsReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The ReportId provided by the addUpdateInventoryItems response.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: includeLines
+          in: query
+          description: Whether or not to include line details with report.
+          required: false
+          schema:
+            type: boolean    
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryJobReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:shipments
   /inventory/virtual/acknowledge:
     post:
       tags:
-        - Retailer API
+        - Channel API - Virtual Inventory
       summary: Update virtual items.
       description: >-
           Let the vendor know you have listed or have an issue with the item they are selling.<br/>
@@ -310,7 +1575,7 @@ paths:
   /inventory/virtual/report/{reportId}/{pageSize}/{pageNumber}:
     get:
       tags:
-        - Retailer API
+        - Channel API - Virtual Inventory
       summary: Get job report details by ReportId.  
       description: Get job report details by ReportId.
       operationId: getUpdateVirtualInventoryItemsReport
@@ -356,7 +1621,7 @@ paths:
   /inventory/virtual/{merchantId}/{pageSize}/{pageNumber}:
     get:
       tags:
-        - Retailer API
+        - Channel API - Virtual Inventory
       summary: Get virtual inventory items.
       description: Get a paged list of virtual inventory items based on search parameters.
       operationId: getVirtualInventory
@@ -442,7 +1707,7 @@ paths:
   /inventory/virtual/id/{id}:
     get:
       tags:
-        - Retailer API
+        - Channel API - Virtual Inventory
       summary: Get virtual inventory item by id.
       description: Get virtual inventory item by id.
       operationId: getVirtualInventoryById
@@ -481,6 +1746,1108 @@ paths:
       security:
         - quipt_auth:
             - read:feeds
+  /orders/purchase/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Channel API - Orders
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getPurchaseOrders
+      parameters:
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+        - name: orderStatus
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            2 = Pending<br/>
+            4 = Open<br/>
+            8 = Shipped<br/>
+            16 = Canceled
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices
+                - Shipments
+                - Cancellations
+                - PackingSlips
+                - ShipByTruckRequests
+                - Payments
+                - Fulfillments
+                - Acknowledgements
+                - SubstitutionFor
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders
+  /orders/purchase/id/{id}:
+    get:
+      tags:
+        - Channel API - Orders
+      summary: Get order by id.
+      description: Get order by id.
+      operationId: getPurchaseOrdersById
+      parameters:
+        - name: id
+          in: path
+          description: The id to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices
+                - Shipments
+                - Cancellations
+                - PackingSlips
+                - ShipByTruckRequests
+                - Payments
+                - Fulfillments
+                - Acknowledgements
+                - SubstitutionFor
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders
+  /orders/purchase/ordernumber/{poNumber}:
+    get:
+      tags:
+        - Channel API - Orders
+      summary: Get order by purchase order number.
+      description: Get order by purchase order number.
+      operationId: getPurchaseOrdersByPO
+      parameters:
+        - name: poNumber
+          in: path
+          description: The purchase order number to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Invoices
+                - Shipments
+                - Cancellations
+                - PackingSlips
+                - ShipByTruckRequests
+                - Payments
+                - Fulfillments
+                - Acknowledgements
+                - SubstitutionFor
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:orders
+  /orders/purchase/create:
+    post:
+      tags:
+        - Channel API - Orders
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: addPurchaseOrders
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /orders/purchase/acknowledge:
+    post:
+      tags:
+        - Channel API - Orders
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: ackPurchaseOrders
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /orders/purchase/cancel:
+    post:
+      tags:
+        - Channel API - Orders
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: cancelPurchaseOrders
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /orders/purchase/archive:
+    post:
+      tags:
+        - Channel API - Orders
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: archivePurchaseOrders
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /orders/purchase/report/{reportId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Channel API - Orders
+      summary: Get job report details by ReportId.  
+      description: Get job report details by ReportId.
+      operationId: getUpdatePurchaseOrdersReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The ReportId provided by the addUpdateInventoryItems response.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: includeLines
+          in: query
+          description: Whether or not to include line details with report.
+          required: false
+          schema:
+            type: boolean    
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryJobReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:shipments
+  /requests/purchase/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Channel API - Requests
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getPurchaseRequests
+      parameters:
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+        - name: requestStatus
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            2 = Pending<br/>
+            4 = Open<br/>
+            8 = Shipped<br/>
+            16 = Canceled
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: vendorId
+          in: query
+          description: >- 
+          required: false
+          schema:
+            type: string          
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Group
+                - Lines.FillLine
+                - Lines.Tracking
+                - Lines.OrderLine
+                - Lines.OrderLine.Fulfillments
+                - Lines.OrderLine.Acknowledgements
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /requests/purchase/ordernumber/{poNumber}:
+    get:
+      tags:
+        - Channel API - Requests
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getPurchaseRequestsByPO
+      parameters:
+        - name: poNumber
+          in: path
+          description: The id or partner reference to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Group
+                - Lines.FillLine
+                - Lines.Tracking
+                - Lines.OrderLine
+                - Lines.OrderLine.Fulfillments
+                - Lines.OrderLine.Acknowledgements
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /requests/purchase/referencenumber/{refNumber}:
+    get:
+      tags:
+        - Channel API - Requests
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getPurchaseRequestsByRefNumber
+      parameters:
+        - name: refNumber
+          in: path
+          description: The id or partner reference to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Group
+                - Lines.FillLine
+                - Lines.Tracking
+                - Lines.OrderLine
+                - Lines.OrderLine.Fulfillments
+                - Lines.OrderLine.Acknowledgements
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /requests/purchase/id/{id}:
+    get:
+      tags:
+        - Channel API - Requests
+      summary: Get order by id.
+      description: Get order by id.
+      operationId: getPurchaseRequestsById
+      parameters:
+        - name: id
+          in: path
+          description: The id to lookup.
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Group
+                - Lines.FillLine
+                - Lines.Tracking
+                - Lines.OrderLine
+                - Lines.OrderLine.Fulfillments
+                - Lines.OrderLine.Acknowledgements
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryVirtualResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /requests/purchase/acknowledge:
+    post:
+      tags:
+        - Channel API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: ackPurchaseRequests
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/purchase/create:
+    post:
+      tags:
+        - Channel API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: addPurchaseRequests
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/purchase/cancel:
+    post:
+      tags:
+        - Channel API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: cancelPurchaseRequests
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/purchase/archive:
+    post:
+      tags:
+        - Channel API - Requests
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: archivePurchaseRequests
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /requests/purchase/report/{reportId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Channel API - Requests
+      summary: Get job report details by ReportId.  
+      description: Get job report details by ReportId.
+      operationId: getUpdatePurchaseRequestsReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The ReportId provided by the addUpdateInventoryItems response.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: includeLines
+          in: query
+          description: Whether or not to include line details with report.
+          required: false
+          schema:
+            type: boolean    
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryJobReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /notifications/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Notification API
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getNotifications
+      parameters:
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+        - name: statuses
+          in: query
+          description: >- 
+            A comma separated list of statuses.<br/>
+            1 = Unread<br/>
+            2 = Read<br/>
+            4 = Archived
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+        - name: types
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Batch
+                - Blog
+                - Report
+                - PurchaseOrder
+                - SalesOrder
+                - Virtual Inventory
+                - PhysicalInventory
+                - Feeds 
+                - ChannelRequest
+                - VendorRequest
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /notifications/update:
+    post:
+      tags:
+        - Notification API
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: updateNotifications
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /notifications/archive:
+    post:
+      tags:
+        - Notification API
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: archiveNotifications
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /notifications/report/{reportId}/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Notification API
+      summary: Get job report details by ReportId.  
+      description: Get job report details by ReportId.
+      operationId: getUpdateNotificationsReport
+      parameters:
+        - name: reportId
+          in: path
+          description: The ReportId provided by the addUpdateInventoryItems response.
+          required: true
+          schema:
+            type: string
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: includeLines
+          in: query
+          description: Whether or not to include line details with report.
+          required: false
+          schema:
+            type: boolean    
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryJobReply'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
+  /notifications/{notificationId}/archive:
+    post:
+      tags:
+        - Notification API
+      summary: Acknowledge orders.
+      description: >-
+          Let the vendor know you have listed or have an issue with the item they are selling.<br/>
+          If listed forsale send the following properties within the request. 
+            - ARP: { Optional, Current sale price. }<br/> 
+            - CatalogStatus: 40<br/>
+            - MapId: { Optional, Your internal identifier. }<br/>
+            - MapURL: { Optional, The link to the item on your site. }<br/>
+            
+          If there is an issue send the following properties within the request.
+             - CatalogStatus: 30<br/>
+             - Messages: { The reason the item is not listed. }<br/>
+      operationId: archiveNotificationsById
+      parameters:
+        - name: notificationId
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: >-
+          Update virtual inventory items to let vendor know what you are doing with the listing.
+          
+          The result of this call creates a job that is processed asynchronously. Retain the ReportId and use getUpdateVirtualInventoryItemsReport to monitor the job's progress.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryVirtualAckJob'
+        required: true
+      responses:
+        '201':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReply'
+        '400':
+          description: Invalid input
+      security:
+        - quipt_auth:
+            - write:requests
+  /catalog/{pageSize}/{pageNumber}:
+    get:
+      tags:
+        - Catalog API
+      summary: Get orders.
+      description: Get orders by page.
+      operationId: getCatalogItems
+      parameters:
+        - name: pageSize
+          in: path
+          description: The number of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: pageNumber
+          in: path
+          description: The page of items to return.
+          required: true
+          schema:
+            type: integer
+            format: int32  
+            
+        - name: keywords
+          in: query
+          description: >- 
+          required: false
+          schema:
+            type: string
+           
+        - name: categories
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: manufacturers
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string  
+        - name: brands
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string   
+        - name: attribute{Suffix}
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string      
+        - name: include
+          in: query
+          description: >-
+            Comma separated list of options. If option not included the property will be returned as null.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Conditions
+                - Facets
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryResult'
+        '400':
+          description: Invalid request.
+      security:
+        - quipt_auth:
+            - read:requests
   /carriers:
     get:
       tags:
@@ -1859,9 +4226,180 @@ components:
           type: string
           description: The carrier method code.
     CategoryReply:
+      type: object
+      properties:
+        Result:
+          type: array
+          description: The categories.
+          items:
+            $ref: '#/components/schemas/CategoryResult'
     CategoryResult:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal id.
+        Name:
+          type: string
+          description: The category name.
+        IsLeaf:
+          type: boolean
+          description: Whether or not the current category is a leaf node.
+        Attributes:
+          type: array
+          description: The list of attributes.
+          items:
+            $ref: '#/components/schemas/CategoryAttributeResult'
+        Sections:
+          type: array
+          description: The list of sections.
+          items:
+            $ref: '#/components/schemas/CategorySectionResult'    
+        Requirements:
+          type: object
+          description: The category requirements.
+          allOf:
+            - $ref: '#/components/schemas/CategoryRequirements' 
+            - type: object
+        Sort:
+          type: integer
+          description: The sort order of the category.
+        HasTitleAndFeaturesBuilder:
+          type: boolean
+          description: Whether or not category has a title and feature builder.
+        IsTemplateReady: 
+          type: boolean
+          description: Whether or not category has a template.
+    CategoryAttributeResult:
+      type: object
+      properties:
+        Id:
+          type: string
+          description: The internal id.
+        Code:
+          type: string
+          description: The code.
+        Text:
+          type: string
+          description: The name.  
+        ToolTip:
+          type: string
+          description: The tooltip.   
+        Options:
+          type: array
+          description: The available options.  
+          items:
+            type: string
+        IsRequired:
+          type: boolean
+          description: Is required.  
+        RegEx:
+          type: string
+          description: Expected formatting for value.  
+        IsFromParent:
+          type: boolean
+          description: Whether or not attribute belongs to parent category. 
+        Sort:
+          type: boolean
+          description: The sort order.  
+        AllowMultipleOptions:
+          type: boolean
+          description: Whether or not to allow multiple selections.     
+        AllowCustomValues:
+          type: boolean
+          description: Whether or not to allow custom values. 
+        VariantRole:
+          type: boolean
+          description: The role the attribute plays in a variant setup.  
+        IsSearch:
+          type: boolean
+          description: Whether or not attribute can be used in catalog search.           
+    CategorySectionResult:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: The section name.
+        IsFromParent:
+          type: boolean
+          description: Is the section referenced from parent category.
     AttributeReply:
-    CategoryAttribute:
+      type: object
+      properties:
+        Result:
+          type: array
+          description: The attributes.
+          items:
+            $ref: '#/components/schemas/CategoryAttributeResult'
+    CategoryRequirements:
+      type: object
+      properties:
+        IsCountryOfOriginRequired:
+          type: boolean
+          description: Whether or not a country of origin is required.
+        IsDescriptionRequired:
+          type: boolean
+          description: Whether or not a description is required.
+        IsFeaturesRequired:
+          type: boolean
+          description: Whether or not features are required.  
+        IsGTINRequired:
+          type: boolean
+          description: Whether or not a GTIN is required. 
+        IsISBNRequired:
+          type: boolean
+          description: Whether or not a ISBN is required. 
+        IsImageRequired:
+          type: boolean
+          description: Whether or not an image is required. 
+        IsInBoxRequired:
+          type: boolean
+          description: Whether or not in box items are required.
+        IsMPNRequired:
+          type: boolean
+          description: Whether or not a MPN is required.  
+        IsMSRPRequired:
+          type: boolean
+          description: Whether or not a MSRP is required.  
+        IsMSRPURLRequired:
+          type: boolean
+          description: Whether or not a MSRP URL is required.   
+        IsSpecSheetURLRequired:
+          type: boolean
+          description: Whether or not a spec. sheet is required. 
+        IsUPCRequired:
+          type: boolean
+          description: Whether or not a UPC is required.  
+        ImageMin:
+          type: boolean
+          description: The image minimum. 
+          allOf:
+            - $ref: '#/components/schemas/CategoryRequirementsImage' 
+            - type: object
+        ImageRec:
+          type: boolean
+          description: The image recommended.
+          allOf:
+            - $ref: '#/components/schemas/CategoryRequirementsImage' 
+            - type: object
+        Serialized:
+          type: boolean
+          description: Whether or not the items must be serialized.  
+        HasIMEI:
+          type: boolean
+          description: Whether or not the items must have an IMEI.   
+    CategoryRequirementsImage:
+      type: object
+      properties:
+        Height:
+          type: number
+          description: The height.
+        Width:
+          type: number
+          description: The width.
+        Resolution:
+          type: number
+          description: The resolution.  
   requestBodies:
     InventoryJob:
       description: Inventory object to add.
