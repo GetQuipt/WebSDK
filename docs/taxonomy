@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quipt Taxonomy Browser</title>
+  <script>
+    async function fetchCategories() {
+      const res = await fetch("https://api.getquipt.com/v2/categories");
+      const data = await res.json();
+      renderTree(data, document.getElementById("tree"));
+    }
+
+    function renderTree(nodes, container) {
+      const ul = document.createElement("ul");
+      nodes.forEach(node => {
+        const li = document.createElement("li");
+        li.textContent = node.name;
+        if (node.children && node.children.length > 0) {
+          renderTree(node.children, li);
+        }
+        ul.appendChild(li);
+      });
+      container.appendChild(ul);
+    }
+
+    window.onload = fetchCategories;
+  </script>
+</head>
+<body>
+  <h1>Quipt Category Tree</h1>
+  <div id="tree"></div>
+</body>
+</html>
